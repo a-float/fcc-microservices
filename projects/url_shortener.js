@@ -1,16 +1,17 @@
 module.exports = function(app) {
-    const URL = require("url").URL;
     const urlArray = []
     const maxArrayLength = 30
     let currentArrayIndex = 0
-    const stringIsAValidUrl = (s) => {
-        try {
-            new URL(s);
-            return true;
-        } catch (err) {
-            return false;
-        }
-    };
+
+    const isURL = (str) => {
+        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+        return pattern.test(str);
+    }
 
     app.get('/urlshortener', (req, res) => {
         res.render('url_shortener', { url: req.url });
@@ -33,7 +34,7 @@ module.exports = function(app) {
     app.post('/urlshortener/api/shorturl', (req, res) => {
         console.log('Shortening "' + req.body.url + '"')
         const urlToShorten = req.body.url
-        if (stringIsAValidUrl(urlToShorten)) {
+        if (isURL(urlToShorten)) {
             const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
             urlArray[currentArrayIndex++] = urlToShorten
             res.json({
