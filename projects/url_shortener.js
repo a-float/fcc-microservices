@@ -1,4 +1,5 @@
 module.exports = function(app) {
+    // storing urls in a small array with consecutive ids. Not ideal but good enough
     const urlArray = []
     const maxArrayLength = 30
     let currentArrayIndex = 0
@@ -37,11 +38,13 @@ module.exports = function(app) {
         if (isURL(urlToShorten)) {
             const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
             urlArray[currentArrayIndex++] = urlToShorten
-            res.json({
+            const res = {
                 original_url: urlToShorten,
                 short_url: (currentArrayIndex - 1).toString(),
                 full_short_url: fullUrl + '/' + (currentArrayIndex - 1).toString()
-            })
+            }
+            console.log('Has been shortened to: ', res.short_url)
+            res.json(res)
             if (currentArrayIndex == maxArrayLength) currentArrayIndex = 0;
         } else {
             res.json({
