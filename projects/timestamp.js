@@ -17,12 +17,12 @@ module.exports = function(app) {
                 error: 'Invalid Date'
             })
         } else {
-            const res = {
+            const data = {
                 unix: Date.parse(date),
                 utc: date.toUTCString()
             }
-            console.log('Response is: ', res)
-            res.json(res)
+            console.log('Response is: ', data)
+            res.json(data)
         }
     })
 }
