@@ -3,14 +3,18 @@ module.exports = function(app) {
         res.render('timestamp', { url: req.url });
     })
     app.get('/timestamp/api/:date?', (req, res) => {
-        const timestamp = Date.parse(req.params.date)
-        if (isNaN(timestamp)) {
-            res.json({ error: 'Invalid Date' })
-        } else {
+        if (req.params.date === undefined) {
+            const now = new Date()
             res.json({
-                unix: timestamp,
-                utc: (new Date(timestamp)).toUTCString()
+                unix: Date.parse(now.toString()),
+                utc: now.toUTCString()
             })
         }
+        if (!isNaN(req.params.date)) req.params.date = parseInt(req.params.date)
+        const date = new Date(req.params.date)
+        res.json({
+            unix: Date.parse(date),
+            uts: date.toUTCString()
+        })
     })
 }

@@ -38,7 +38,8 @@ module.exports = function(app) {
             urlArray[currentArrayIndex++] = urlToShorten
             res.json({
                 original_url: urlToShorten,
-                short_url: fullUrl + '/' + (currentArrayIndex - 1).toString()
+                short_url: (currentArrayIndex - 1).toString(),
+                full_short_url: fullUrl + '/' + (currentArrayIndex - 1).toString()
             })
             if (currentArrayIndex == maxArrayLength) currentArrayIndex = 0;
         } else {
