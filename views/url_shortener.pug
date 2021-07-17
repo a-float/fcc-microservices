@@ -1,0 +1,11 @@
+extends layout.pug
+block content
+  h1 URL Shortener Microservice
+  main
+    section
+      form(action=url+'/api/shorturl' method='POST')
+        fieldset
+          legend URL Shortener
+          label(for='url_input') URL:
+          input#url_input(type='text' name='url' placeholder='https://www.freecodecamp.org/')
+          input(type='submit' value='POST URL')

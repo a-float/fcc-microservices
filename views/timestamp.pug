@@ -1,0 +1,15 @@
+extends layout.pug
+block content
+  h1 Timestamp Microservice
+  hr
+  .container
+    h3 Example Usage:
+    ul
+      li
+        a(href=url+'/api/2015-12-25') [project url]/api/2015-12-25
+      li
+        a(href=url+'/api/1451001600000') [project url]/api/1451001600000
+    h3 Example Output:
+    p
+      code {&quot;unix&quot;:1451001600000, &quot;utc&quot;:&quot;Fri, 25 Dec 2015 00:00:00 GMT&quot;}
+

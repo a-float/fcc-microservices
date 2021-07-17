@@ -1,0 +1,12 @@
+extends layout.pug
+block content
+  h2 Request Header Parser Microservice
+  h3 Example Usage:
+  p
+    a(href=url+'/api/whoami') [base url]/api/whoami
+  h3 Example Output:
+  p
+    code
+      | {&quot;ipaddress&quot;:&quot;::ffff:159.20.14.100&quot;,&quot;language&quot;:&quot;en-US,en;q=0.5&quot;,
+      br
+      | &quot;software&quot;:&quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0&quot;}
