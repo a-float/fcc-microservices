@@ -5,6 +5,7 @@ require('dotenv').config()
 var express = require('express');
 var morgan = require('morgan')
 var bodyParser = require('body-parser')
+var fs = require('fs')
 
 var app = express();
 
@@ -21,19 +22,27 @@ app.use(morgan('tiny'))
 app.set('views', './views')
 app.set('view engine', 'pug')
 
-app.get("/", function(req, res) {
-    res.render("index");
-});
 
 // register the projects' routes
-require('./projects/timestamp')(app);
-require('./projects/request_header_parser')(app);
-require('./projects/url_shortener')(app);
-
-// your first API endpoint... 
-app.get("/api/hello", function(req, res) {
-    res.json({ greeting: 'hello API' });
+const names = fs.readdirSync(__dirname + '/projects').map(s => s.split('.').slice(0, -1).join('.'))
+for (const name of names) {
+    require('./projects/' + name)(app, name)
+}
+app.get('/', (req, res) => {
+    res.render('index')
 });
+// // setup the table of contents
+// const hyphenToSnakeCase = str => str.replace(/-[a-zA-Z]/g, letter => ` ${letter.toUpperCase()}`)
+// app.get("/", function(req, res) {
+//     res.render("index", {
+//         links: names.map(name => {
+//             return {
+//                 addr: name,
+//                 name: hyphenToSnakeCase(name)
+//             }
+//         })
+//     });
+// });
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {

@@ -1,8 +1,9 @@
-module.exports = function(app) {
-    app.get('/requestheaderparser', (req, res) => {
-        res.render('request_header_parser', { url: req.url });
+module.exports = function(app, filename) {
+    const baseUrl = '/' + filename
+    app.get(baseUrl, (req, res) => {
+        res.render(filename, { url: baseUrl });
     })
-    app.get('/requestheaderparser/api/whoami', (req, res) => {
+    app.get(baseUrl + '/api/whoami', (req, res) => {
         const info = {
             ipaddress: req.ip,
             language: req.headers['accept-language'],

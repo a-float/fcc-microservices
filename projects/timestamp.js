@@ -1,8 +1,9 @@
-module.exports = function(app) {
-    app.get('/timestamp', (req, res) => {
-        res.render('timestamp', { url: req.url });
+module.exports = function(app, filename) {
+    const baseUrl = '/' + filename
+    app.get(baseUrl, (req, res) => {
+        res.render(filename, { url: baseUrl });
     })
-    app.get('/timestamp/api/:date?', (req, res) => {
+    app.get(baseUrl + 'api/:date?', (req, res) => {
         console.log('Parsing date: ' + req.params.date)
         let date;
         if (req.params.date === undefined) { // the current time

@@ -1,5 +1,6 @@
-module.exports = function(app) {
-    // storing urls in a small array with consecutive ids. Not ideal but good enough
+module.exports = function(app, filename) {
+    const baseUrl = '/' + filename
+        // storing urls in a small array with consecutive ids. Not ideal but good enough
     const urlArray = []
     const maxArrayLength = 30
     let currentArrayIndex = 0
@@ -14,10 +15,10 @@ module.exports = function(app) {
         return pattern.test(str);
     }
 
-    app.get('/urlshortener', (req, res) => {
-        res.render('url_shortener', { url: req.url });
+    app.get(baseUrl, (req, res) => {
+        res.render(filename, { url: baseUrl });
     })
-    app.get('/urlshortener/api/shorturl/:shorturl', (req, res) => {
+    app.get(baseUrl + '/api/shorturl/:shorturl', (req, res) => {
         console.log(req.params)
         let shorturl
         try {
@@ -32,7 +33,7 @@ module.exports = function(app) {
             res.json({ error: 'invalid short url' })
         }
     })
-    app.post('/urlshortener/api/shorturl', (req, res) => {
+    app.post(baseUrl + '/api/shorturl', (req, res) => {
         console.log('Shortening "' + req.body.url + '"')
         const urlToShorten = req.body.url
         if (isURL(urlToShorten)) {
