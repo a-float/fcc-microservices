@@ -1,37 +1,51 @@
 extends layout.pug
 block content
-    .container
     h1 Exercise tracker
-    form(action=url+'/api/users' method='post')
-        h3 Create a New User
-        p
-        code POST /api/users
-        input#uname(type='text' name='username' placeholder='username')
-        input(type='submit' value='Submit')
-    form#exercise-form(method='post')
-        h3 Add exercises
-        p
-        code POST /api/users/:_id/exercises
-        input#uid(type='text' name=':_id' placeholder=':_id')
-        input#desc(type='text' name='description' placeholder='description*')
-        input#dur(type='text' name='duration' placeholder='duration* (mins.)')
-        input#dat(type='text' name='date' placeholder='date (yyyy-mm-dd)')
-        input(type='submit' value='Submit')
-    p
-        strong GET user&apos;s exercise log: 
-        code GET /api/users/:_id/logs?[&amp;from][&amp;to][&amp;limit]
-    p
-        strong [ ]
-        |  = optional
-    p
-        strong from, to
-        |  = dates (yyyy-mm-dd); 
-        strong limit
-        |  = number
+    .flex-container
+        .flex-element
+            form(action=url+'/api/users' method='post')
+                h3 Create a New User
+                code POST /api/users
+                input#uname(type='text' name='username' placeholder='username')
+                input(type='submit' value='Submit')
+            span
+                span View all of the users: 
+                a(href=url+'/api/users/') 
+                    code GET /api/users 
+            form#exercise-form(method='post')
+                h3 Add exercises
+                p
+                code POST /api/users/:_id/exercises
+                input#uid(type='text' name=':_id' placeholder=':_id')
+                input#desc(type='text' name='description' placeholder='description*')
+                input#dur(type='text' name='duration' placeholder='duration* (mins.)')
+                input#dat(type='text' name='date' placeholder='date (yyyy-mm-dd)')
+                input(type='submit' value='Submit')
+            p
+                strong GET user&apos;s exercise log: 
+                code GET /api/users/:_id/logs?[&amp;from][&amp;to][&amp;limit]
+            p
+                strong [ ]
+                |  = optional
+            p
+                strong from, to
+                |  = dates (yyyy-mm-dd); 
+                strong limit
+                |  = number
+        .flex-element
+            h3 Current Database Content 
+            .text-left.db-preview
+                ol
+                    each user in users
+                        li 
+                            p !{`<b>${user.username}</b> (id:${user._id})`}
+                            ol(type='a')
+                                each exe in user.exercises
+                                    li.exercise #{`date: ${exe.date.toUTCString()} duration: ${exe.duration} descr: ${exe.description.slice(0,10)}`}
     script.
         const exerciseForm = document.getElementById("exercise-form");
         exerciseForm.addEventListener("submit", () => {
         const userId = document.getElementById("uid").value;
-        exerciseForm.action = url+`/api/users/${userId}/exercises`;
+        exerciseForm.action = '!{url}' + `/api/users/${userId}/exercises`;
         exerciseForm.submit();
         });

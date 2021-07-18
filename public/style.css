@@ -7,11 +7,13 @@ body {
     background-color: #FaFaFa;
     text-align: center;
     line-height: 1.4em;
+    min-height: 93vh;
 }
 
 .container {
     padding: 0;
     margin-top: 40px;
+    padding-bottom: 2rem;
 }
 
 h3 {
@@ -24,7 +26,7 @@ hr {
 
 .footer {
     position: absolute;
-    bottom: 10px;
+    bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -38,7 +40,7 @@ code {
 
 ul {
     list-style-type: none;
-    padding: 0px;
+    /* padding: 0px; */
 }
 
 li {
@@ -71,4 +73,34 @@ input[type='text'] {
 
 h3 {
     margin: 10px;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.flex-element {
+    width: 50%;
+    border-right: 2px solid lightgrey;
+}
+
+.text-left {
+    text-align: left
+}
+
+.no-pad {
+    padding: 0px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.exercise {
+    font-size: 0.8rem;
+}
+
+.db-preview {
+    overflow-y: scroll;
+    height: 100%
 }
