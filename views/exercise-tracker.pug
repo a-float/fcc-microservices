@@ -21,17 +21,24 @@ block content
                 input#dur(type='text' name='duration' placeholder='duration* (mins.)')
                 input#dat(type='text' name='date' placeholder='date (yyyy-mm-dd)')
                 input(type='submit' value='Submit')
-            p
-                strong GET user&apos;s exercise log: 
+            form(method='get')
+                h3 View exercise logs
                 code GET /api/users/:_id/logs?[&amp;from][&amp;to][&amp;limit]
-            p
-                strong [ ]
-                |  = optional
-            p
+                p
+                    strong [ ]
+                    |  = optional
+                p
                 strong from, to
                 |  = dates (yyyy-mm-dd); 
                 strong limit
                 |  = number
+                br
+                input(type='text' name=':_id' placeholder=':_id')
+                input(type='text' name='from' placeholder='2021-04-12*')
+                input(type='text' name='to' placeholder='2021-07-18')
+                input(type='text' name='limit' placeholder='5')
+                input(type='submit' value='Submit')
+            
         .flex-element
             h3 Current Database Content 
             .text-left.db-preview

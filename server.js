@@ -2,13 +2,12 @@
 
 // init project
 require('dotenv').config()
+var fs = require('fs')
 var express = require('express');
 var morgan = require('morgan')
 var bodyParser = require('body-parser')
-var fs = require('fs')
 
 var app = express();
-
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 

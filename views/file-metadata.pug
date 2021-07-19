@@ -1,0 +1,11 @@
+extends layout.pug
+block content
+    h1 API Project: File Metadata Microservice
+    h3 Usage:
+    p
+    | Please Upload a File ...
+    .view
+        h4#output
+        form(enctype='multipart/form-data' method='POST' action=url+'/api/fileanalyse')
+            input#inputfield(type='file' name='upfile')
+            input#button(type='submit' value='Upload')

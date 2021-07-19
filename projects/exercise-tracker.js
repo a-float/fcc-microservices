@@ -59,8 +59,11 @@ module.exports = function(app, filename) {
             const newUser = new User({ username: username })
             newUser.save((err, data) => {
                 if (err) {
-                    console.error(err)
-                    res.json({ error: 'Could not add the user' })
+                    if (err.code === 11000) {
+                        res.json({ error: 'The username is taken' })
+                    } else {
+                        res.json({ error: 'Could not add the user' })
+                    }
                 } else {
                     console.log('Created user: ' + data)
                     res.json({
@@ -71,17 +74,14 @@ module.exports = function(app, filename) {
             })
         }
     })
+    const handleNoUserError = (res, err) => {
+        const errMsg = `No user with specified id: "${req.body._id}"`
+        console.log(errMsg + ' ' + err)
+        res.json({ error: errMsg })
+    }
     app.post(baseUrl + '/api/users/:_id/exercises', async(req, res) => {
-        if (!req.body.description || isNaN(req.body.duration)) {
-            const info = { error: 'Invalid exercise data' }
-            console.log(info)
-            res.json(info)
-            return
-        }
-        console.log(req.params)
         User.findById(req.params._id)
-            .then(async user => { // add the new exercise
-                console.log(user)
+            .then(user => {
                 if (!req.body.date) req.body.date = new Date()
                 req.body.owner = user._id
                 const newExercise = new Exercise(req.body)
@@ -91,15 +91,35 @@ module.exports = function(app, filename) {
                         res.json({ error: 'Could not add the exercise' })
                     } else {
                         console.log('Created exercise: ' + data)
+                        user.exercises.push(newExercise._id)
+                        user.save().then(() => {
+                            res.json({
+                                _id: user._id,
+                                username: user.username,
+                                date: newExercise.date,
+                                description: newExercise.description,
+                                duration: newExercise.duration
+                            })
+                        })
                     }
                 })
-                user.exercises.push(newExercise._id)
-                res.json(await user.save())
             })
             .catch(err => {
-                const errMsg = `No user with specified id: "${req.body._id}"`
-                console.log(errMsg + ' ' + err)
-                res.json({ error: errMsg })
+                handleNoUserError(res, err)
+            })
+    })
+    app.get(baseUrl + '/api/users/:_id/logs', async(req, res) => {
+        User.findById(req.params._id).populate('exercises')
+            .then(user => {
+                res.json({
+                    _id: user._id,
+                    username: user.username,
+                    count: user.exercises.length,
+                    logs: user.exercises.map(e => { return { date: e.date, duration: e.duration, description: e.description } })
+                })
+            })
+            .catch(err => {
+                handleNoUserError(res, err)
             })
     })
 }
