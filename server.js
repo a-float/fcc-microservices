@@ -23,7 +23,7 @@ app.set('view engine', 'pug')
 
 
 // register the projects' routes
-const names = fs.readdirSync(__dirname + '/projects').map(s => s.split('.').slice(0, -1).join('.'))
+const names = fs.readdirSync(__dirname + '/projects').filter(s => s[0] !== '_').map(s => s.split('.').slice(0, -1).join('.'))
 for (const name of names) {
     require('./projects/' + name)(app, name)
 }
