@@ -12,6 +12,7 @@ module.exports = function(app, filename) {
             app.get(baseUrl, async(req, res) => {
                 // get all users with their exercises
                 const users = await User.find().populate('exercises')
+                console.log(users)
                 res.render(filename, { url: filename, users })
             })
             app.get(baseUrl + '/api/users', async(req, res) => {
@@ -35,7 +36,8 @@ module.exports = function(app, filename) {
                     }
                 })
             })
-            const handleNoUserError = (res, err) => {
+            const handleError = (res, err) => {
+                console.log(err)
                 const errMsg = `No user with specified id: "${req.body._id}"`
                 console.log(errMsg + ' ' + err)
                 res.json({ error: errMsg })
@@ -44,44 +46,67 @@ module.exports = function(app, filename) {
                 User.findById(req.params._id)
                     .then(user => {
                         if (!req.body.date) req.body.date = new Date()
-                        req.body.owner = user._id
-                        const newExercise = new Exercise(req.body)
-                        newExercise.save((err, data) => {
+                        req.body.owner = user._id;
+                        Exercise.create(req.body, (err, newExercise) => {
                             if (err) {
                                 console.log(err)
                                 res.json({ error: 'Could not add the exercise' })
                             } else {
-                                console.log('Created exercise: ' + data)
+                                console.log('Created exercise: ' + newExercise)
                                 user.exercises.push(newExercise._id)
-                                user.save().then(() => {
-                                    res.json({
-                                        _id: user._id,
-                                        username: user.username,
-                                        date: newExercise.date.toDateString(),
-                                        description: newExercise.description,
-                                        duration: newExercise.duration
-                                    })
+                                user.save(err => {
+                                    if (err) { handleError(err) } else {
+                                        res.json({
+                                            _id: user._id,
+                                            username: user.username,
+                                            date: newExercise.date.toDateString(),
+                                            description: newExercise.description,
+                                            duration: newExercise.duration
+                                        })
+                                    }
                                 })
                             }
                         })
                     })
                     .catch(err => {
-                        handleNoUserError(res, err)
+                        handleError(res, err)
                     })
             })
             app.get(baseUrl + '/api/users/:_id/logs', async(req, res) => {
-                User.findById(req.params._id).populate('exercises')
-                    .then(user => {
-                        res.json({
-                            _id: user._id,
-                            username: user.username,
-                            count: user.exercises.length,
-                            logs: user.exercises.map(e => { return { date: e.date, duration: e.duration, description: e.description } })
-                        })
+                console.log(req.query)
+                const dateFilters = { from: false, to: false }
+                let query = Exercise
+                    .find({ owner: req.params._id })
+                    .select('description duration date')
+                if ('from' in req.query && !isNaN(Date.parse(req.query.from))) {
+                    dateFilters.from = true
+                    query = query.where('date').gt(req.query.from)
+                }
+                if ('to' in req.query && !isNaN(Date.parse(req.query.to))) {
+                    dateFilters.to = true
+                    query = query.where('date').lt(req.query.to)
+                }
+                if ('limit' in req.query && !isNaN(req.query.limit.replace(' ', ''))) {
+                    query = query.limit(parseInt(req.query.limit))
+                }
+                const exercises = await query.exec()
+                const user = await User.findById(req.params._id)
+                console.log(exercises.map(e => e.description), 'for user', user.username)
+                const result = {
+                    _id: user._id,
+                    username: user.username,
+                    ...(dateFilters.from && { from: new Date(req.query.from).toDateString() }),
+                    ...(dateFilters.to && { to: new Date(req.query.to).toDateString() }),
+                    count: exercises.length,
+                    log: exercises.map(e => {
+                        return {
+                            description: e.description,
+                            duration: e.duration,
+                            date: e.date
+                        }
                     })
-                    .catch(err => {
-                        handleNoUserError(res, err)
-                    })
+                }
+                res.json(result)
             })
         })
         .catch(err => {

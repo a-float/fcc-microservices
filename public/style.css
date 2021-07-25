@@ -26,6 +26,10 @@ hr {
     margin: 25px;
 }
 
+#url_input {
+    width: 100%;
+}
+
 .footer {
     position: absolute;
     bottom: 5px;

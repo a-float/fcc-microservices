@@ -16,12 +16,12 @@ block content
                 h3 Add exercises
                 p
                 code POST /api/users/:_id/exercises
-                input#uid(type='text' name=':_id' placeholder=':_id')
+                input#euid(type='text' name=':_id' placeholder=':_id')
                 input#desc(type='text' name='description' placeholder='description*')
                 input#dur(type='text' name='duration' placeholder='duration* (mins.)')
                 input#dat(type='text' name='date' placeholder='date (yyyy-mm-dd)')
                 input(type='submit' value='Submit')
-            form(method='get')
+            form#logs-form(method='get')
                 h3 View exercise logs
                 code GET /api/users/:_id/logs?[&amp;from][&amp;to][&amp;limit]
                 p
@@ -33,8 +33,8 @@ block content
                 strong limit
                 |  = number
                 br
-                input(type='text' name=':_id' placeholder=':_id')
-                input(type='text' name='from' placeholder='2021-04-12*')
+                input#fuid(type='text' name=':_id' placeholder=':_id')
+                input(type='text' name='from' placeholder='2021-04-12')
                 input(type='text' name='to' placeholder='2021-07-18')
                 input(type='text' name='limit' placeholder='5')
                 input(type='submit' value='Submit')
@@ -48,11 +48,18 @@ block content
                             p !{`<b>${user.username}</b> (id:${user._id})`}
                             ol(type='a')
                                 each exe in user.exercises
-                                    li.exercise #{`date: ${exe.date.toUTCString()} duration: ${exe.duration} descr: ${exe.description.slice(0,10)}`}
+                                    li.exercise #{`date: ${exe.date.toUTCString()} duration: ${exe.duration} descr: ${exe.description.slice(0,20)}`}
     script.
         const exerciseForm = document.getElementById("exercise-form");
         exerciseForm.addEventListener("submit", () => {
-        const userId = document.getElementById("uid").value;
-        exerciseForm.action = '!{url}' + `/api/users/${userId}/exercises`;
-        exerciseForm.submit();
+            const userId = document.getElementById("euid").value;
+            exerciseForm.action = '!{url}' + `/api/users/${userId}/exercises`;
+            exerciseForm.submit();
+        });
+        const logsForm = document.getElementById("logs-form");
+        logsForm.addEventListener("submit", () => {
+            console.log(logsForm)
+            const userId = document.getElementById("fuid").value;
+            logsForm.action = '!{url}' + `/api/users/${userId}/logs/?`;
+            logsForm.submit();
         });

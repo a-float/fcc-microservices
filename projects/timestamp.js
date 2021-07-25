@@ -3,7 +3,7 @@ module.exports = function(app, filename) {
     app.get(baseUrl, (req, res) => {
         res.render(filename, { url: baseUrl });
     })
-    app.get(baseUrl + 'api/:date?', (req, res) => {
+    app.get(baseUrl + '/api/:date?', (req, res) => {
         console.log('Parsing date: ' + req.params.date)
         let date;
         if (req.params.date === undefined) { // the current time
