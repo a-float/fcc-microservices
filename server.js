@@ -27,49 +27,16 @@ const names = fs.readdirSync(__dirname + '/projects')
     .filter(s => s[0] !== '_')
     .map(s => s.split('.').slice(0, -1).join('.'))
 
-for (const name of names) {
+names.forEach(name => {
     console.log('Registering:', name)
     require('./projects/' + name)(app, name)
-}
+})
+
 app.get('/', (req, res) => {
     res.render('index')
 });
-// // setup the table of contents
-// const hyphenToSnakeCase = str => str.replace(/-[a-zA-Z]/g, letter => ` ${letter.toUpperCase()}`)
-// app.get("/", function(req, res) {
-//     res.render("index", {
-//         links: names.map(name => {
-//             return {
-//                 addr: name,
-//                 name: hyphenToSnakeCase(name)
-//             }
-//         })
-//     });
-// });
 
-// listen for requests :)
+// listen for requests
 var listener = app.listen(process.env.PORT, function() {
     console.log('Your app is listening on port ' + listener.address().port);
 });
-
-/*
-// handle 404 error
-app.use(function(req, res, next) {
-    res.status(404);
-
-    // respond with html page
-    if (req.accepts('html')) {
-        res.render('404', { url: req.url });
-        return;
-    }
-
-    // respond with json
-    if (req.accepts('json')) {
-        res.json({ error: 'Not found' });
-        return;
-    }
-
-    // default to plain-text. send()
-    res.type('txt').send('Not found');
-});
-*/
